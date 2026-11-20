@@ -1,0 +1,56 @@
+name: Build
+# Builds ZRL-Sprawl.zip from source with build.sh on every push and pull request (the zip is kept as a
+# workflow artifact). Running this workflow by hand with "release" ticked, or pushing a version tag
+# (v1.2.3), also publishes a GitHub Release with the zip attached, so
+# https://github.com/<repo>/releases/latest/download/ZRL-Sprawl.zip always points at the newest one.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Publish a release (tag v<VERSION file>)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    env:
+      IS_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.release == true }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the C# compiler
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq mono-mcs zip unzip
+      - name: Build the zip
+        run: ./build.sh
+      - name: Check what is inside
+        run: |
+          unzip -l ZRL-Sprawl.zip
+          for f in ZRL-Sprawl.scr Microsoft.Web.WebView2.Core.dll Microsoft.Web.WebView2.WinForms.dll WebView2Loader.dll sprawl/index.html README.txt LICENSE THIRD-PARTY-NOTICES.md; do
+            unzip -l ZRL-Sprawl.zip "ZRL-Sprawl/$f" >/dev/null || { echo "::error::missing $f"; exit 1; }
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZRL-Sprawl
+          path: ZRL-Sprawl.zip
+      - name: Publish the release
+        if: env.IS_RELEASE == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v=$(tr -d ' \r\n' < VERSION); TAG="v$v"
+          if [ "${GITHUB_REF#refs/tags/}" != "$GITHUB_REF" ] && [ "$GITHUB_REF_NAME" != "$TAG" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the VERSION file ($v)"; exit 1
+          fi
+          sum=$(sha256sum ZRL-Sprawl.zip | cut -d' ' -f1)
+          { cat docs/release-notes.md; printf '\n\nSHA-256 of `ZRL-Sprawl.zip`: `%s`\n' "$sum"; } > /tmp/notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" ZRL-Sprawl.zip --clobber
+            gh release edit "$TAG" --notes-file /tmp/notes.md
+          else
+            gh release create "$TAG" ZRL-Sprawl.zip --target "$GITHUB_SHA" --title "ZRL Sprawl $TAG" --notes-file /tmp/notes.md
+          fi
