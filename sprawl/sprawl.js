@@ -113,7 +113,7 @@ function buildCity(slots) {
   }
   /* hero signs hung over the route so the camera gets a long, square look at them. d on the 64 lap, slot, half width, height above the camera line */
   const HERO = [[4.6, 1, 9.5, 15], [15.6, 0, 26, 1, -30], [26.2, 19, 30, -70], [38.6, 0, 17, 3, 26], [46.4, 16, 9.5, 14], [55.2, 3, 22, 2, 28], [61.5, 15, 9.5, 20], [8.2, 12, 9.5, 30], [34.5, 8, 14, 10], [50.5, 2, 12, 16], [22.6, 9, 22, -36], [57.9, 18, 14, 4, -22], [43.2, 13, 9.5, 12],
-    /* the Sprawl books */ [11.4, 22, 9.5, 12], [19.2, 27, 22, 4, 30], [29.5, 24, 26, -32], [41.3, 21, 9.5, 11], [47.9, 25, 9.5, 12], [52.8, 23, 11, 10], [59.8, 26, 9.5, 13],
+    /* the Sprawl books */ [11.4, 22, 9.5, 12], [19.2, 27, 22, 4, 30], [29.5, 24, 26, -32, -12], [41.3, 21, 9.5, 11], [47.9, 25, 9.5, 12], [52.8, 23, 11, 10], [59.8, 26, 9.5, 13],
     /* Chiba clinics and friends */ [13.5, 28, 9.5, 12], [17.4, 29, 9.5, 12], [32.5, 30, 11, 10], [63.2, 31, 9.5, 13]];
   HERO.forEach(hp => { const d = hp[0] * DU, p = pathAt(d), q = pathAt(d + 4), tx = q[0] - p[0], tz = q[2] - p[2], tl = Math.hypot(tx, tz) || 1, t = [tx / tl, tz / tl], n = [-t[0], -t[1]], rt = [n[1], -n[0]], side = hp[4] || 0;
     const x = p[0] + rt[0] * -side, z = p[2] + rt[1] * -side, y = p[1] + hp[3] + hp[2] / 2, ang = side ? Math.atan2(side, 60) * .9 : 0, ca = Math.cos(ang), sa = Math.sin(ang), r2 = [rt[0] * ca - rt[1] * sa, rt[0] * sa + rt[1] * ca];
@@ -250,12 +250,11 @@ void main(){vec2 q=vQ;bool front=vFront>0.;
   o=vec4(hc*lum*scan*fl*(.5+roll*.5)*exp(-pow(dist/620.,1.6)),1.);return;}
  float kind=vF.y;
  if(!front){ if(kind>.5)q.x=1.-q.x; else{ vec2 e=min(q,1.-q);float rim=step(min(e.x,e.y),.03);o=vec4(fog(vec3(.012,.01,.02)+vec3(.05,.02,.08)*rim,vP),1.);return;} }
- /* a rare glitch: a few rows slip sideways for a moment */
- float gk=floor(uPh*uT*3.);float gl=step(.93,h1(vec2(gk,vF.x)));float row=floor(q.y*24.);q.x+=gl*(h1(vec2(row,gk))-.5)*.08*step(.6,h1(vec2(row,vF.x+gk)));
+ /* signs are steady: no row slip and no blink (both read as a broken picture on a TV). The faint scan lines fade out before they get finer than a few pixels, so small and distant signs do not shimmer. */
  vec2 uv=mix(vUV.xy,vUV.zw,vec2(clamp(q.x,0.,1.),1.-q.y));vec3 t=texture(uAtlas,uv).rgb;
- float fl=1.-.5*step(.965,h1(vec2(floor(uPh*uT*9.),vF.x*3.7)))*step(.5,h1(vec2(vF.x,2.)));
- float px=.92+.08*sin(q.y*3.14159*vF.z*60.);
- vec3 col=t*(.3+.7*t)*vF.z*1.3*fl*px+t*.1;
+ float sf=vF.z*60.;float ppp=2./(sf*fwidth(q.y)+1e-6);
+ float px=.92+.08*sin(q.y*3.14159*sf)*smoothstep(3.,8.,ppp);
+ vec3 col=t*(.3+.7*t)*vF.z*1.3*px+t*.1;
  o=vec4(fog(col,vP),1.);}`;
 
 const VS_CRAFT = GH + COMMON + `layout(location=0)in vec2 aP;layout(location=2)in vec4 iA;layout(location=3)in vec4 iB;layout(location=4)in vec4 iC;
