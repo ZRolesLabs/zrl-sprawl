@@ -1,0 +1,27 @@
+// ZRL Sprawl for Eversolo streamers: the Sprawl flight film as an Android screensaver (DreamService), plus a small
+// touch tile to preview it and open the screensaver picker. No permissions at all (no INTERNET): it cannot phone home.
+// The film (assets/flight.mp4, about 160 MB) is not in git; it is added to the built APK by film/pack_film.py.
+plugins { id 'com.android.application' }
+
+def buildNo = (System.getenv('ZS_BUILD_NUMBER') ?: '0').toInteger() % 999
+
+android {
+    namespace 'labs.zroles.sprawl'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'labs.zroles.sprawl.eversolo'
+        minSdk 24
+        targetSdk 30
+        versionCode 1000 + buildNo
+        versionName '1.0.0'
+    }
+    // Builds are signed with the standard Android debug key so a home build installs as-is.
+    // Release APKs on GitHub are re-signed with the ZRolesLabs key when the film is added.
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.debug } }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    androidResources { noCompress 'mp4' }
+    lint { checkReleaseBuilds false; abortOnError false }
+}

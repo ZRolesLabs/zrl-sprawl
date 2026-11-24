@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- No permissions on purpose. This app has no network access. -->
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <application
+        android:label="ZRL Sprawl"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false">
+        <!-- The screensaver. Pick it in Android's screensaver picker (the ZRL Screensaver tile opens it). -->
+        <service
+            android:name=".SprawlDream"
+            android:exported="true"
+            android:label="ZRL Sprawl"
+            android:icon="@mipmap/ic_launcher"
+            android:permission="android.permission.BIND_DREAM_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.dreams.DreamService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <!-- The film as an ordinary screen. A tap closes it. -->
+        <activity
+            android:name=".Preview"
+            android:exported="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize"
+            android:excludeFromRecents="true" />
+        <!-- The tile in the Apps screen: Preview, Choose screensaver, Close. -->
+        <activity
+            android:name=".Setup"
+            android:exported="true"
+            android:label="ZRL Screensaver"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|smallestScreenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
