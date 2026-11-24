@@ -11,6 +11,8 @@ An un-enshittified screensaver for Windows. A slow night flight over a neon city
 
 ![One monitor](docs/zrl-sprawl-one-monitor.jpg)
 
+> **Got an Eversolo streamer?** The same flight runs as the screensaver on its screen: see [ZRL Sprawl for Eversolo](eversolo/).
+
 ## Install it (about 2 minutes)
 
 **You need:** Windows 10 or 11, 64-bit. That's it for most PCs. See [What it needs](#what-it-needs) if it doesn't start.
@@ -89,7 +91,7 @@ That fetches the WebView2 SDK from NuGet (pinned by checksum), compiles `windows
 
 ## Bugs, questions and ideas
 
-Open an issue: **[github.com/ZRolesLabs/zrl-sprawl/issues](https://github.com/ZRolesLabs/zrl-sprawl/issues)**. For a problem, say which Windows version, which graphics card, and how many monitors at what resolution.
+Open an issue: **[github.com/ZRolesLabs/zrl-sprawl/issues](https://github.com/ZRolesLabs/zrl-sprawl/issues)**. For a problem, say which Windows version, which graphics card, and how many monitors at what resolution. For the Eversolo version, say which streamer and firmware.
 
 ## License
 
