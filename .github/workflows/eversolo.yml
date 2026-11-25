@@ -9,6 +9,7 @@ name: Eversolo
 # parts (GitHub refuses single files over 100 MB), and refuses to publish unless its SHA-256 matches
 # eversolo/RELEASE-SHA256 in this commit. The release is never marked "latest", so the Windows download
 # link (releases/latest/download/ZRL-Sprawl.zip) keeps pointing at the Windows build.
+# Once a version is published and eversolo-drop is deleted, a release run only refreshes its notes.
 on:
   push:
     paths: ['eversolo/**', '.github/workflows/eversolo.yml']
@@ -60,8 +61,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch the signed APK and check it
+      - name: Fetch the signed APK and check it (first publish only)
+        id: apk
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          v=$(tr -d ' \r\n' < eversolo/VERSION); TAG="eversolo-v$v"
+          if gh release view "$TAG" >/dev/null 2>&1 && ! git ls-remote --exit-code origin refs/heads/eversolo-drop >/dev/null; then
+            echo "$TAG is already published and eversolo-drop is gone: refreshing the release notes only."
+            echo "notes_only=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
           git fetch -q --depth 1 origin eversolo-drop
           git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP"
           cat "$RUNNER_TEMP"/zrl-sprawl-eversolo.apk.part-* > zrl-sprawl-eversolo.apk
@@ -72,11 +81,14 @@ jobs:
       - name: Publish the release (not marked latest)
         env:
           GH_TOKEN: ${{ github.token }}
+          NOTES_ONLY: ${{ steps.apk.outputs.notes_only }}
         run: |
           v=$(tr -d ' \r\n' < eversolo/VERSION); TAG="eversolo-v$v"
-          sum=$(sha256sum zrl-sprawl-eversolo.apk | cut -d' ' -f1)
+          sum=$(tr -d ' \r\n' < eversolo/RELEASE-SHA256)
           { cat docs/eversolo-release-notes.md; printf '\n\nSHA-256 of `zrl-sprawl-eversolo.apk`: `%s`\n' "$sum"; } > "$RUNNER_TEMP/notes.md"
-          if gh release view "$TAG" >/dev/null 2>&1; then
+          if [ "$NOTES_ONLY" = "true" ]; then
+            gh release edit "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --latest=false
+          elif gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" zrl-sprawl-eversolo.apk --clobber
             gh release edit "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --latest=false
           else
