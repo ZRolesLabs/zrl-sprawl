@@ -1,12 +1,26 @@
 # ZRL Sprawl for Eversolo
 
+![ZRL Sprawl for Eversolo streamers](docs/eversolo-banner.jpg)
+
 The ZRL Sprawl night flight as the screensaver on an Eversolo streamer's own screen. When the player sits idle, the screen flies you through the neon city instead of showing the stock screensaver. Silent, no network, no account, nothing to configure.
 
 It's an ordinary Android screensaver app. Eversolo streamers run Android, and Eversolo's own tutorials show how to add apps to them, so nothing is hacked, rooted or unlocked.
 
+![The flight on a DMP-T8-style screen (illustration)](docs/eversolo-on-the-player.jpg)
+<sub>Illustration: a real frame of the film on a DMP-T8-style front panel.</sub>
+
 - **Tested on:** Eversolo DMP-T8, firmware 1.6.15 (2160×1080 touch screen).
 - **Probably works on:** other Eversolo streamers with an Android screen and the same web installer. We haven't tried them. If you do, [tell us how it went](https://github.com/ZRolesLabs/zrl-sprawl/issues).
 - **Size:** about 165 MB, almost all of it the film.
+
+## What you'll see
+
+A 150-second flight through a rainy neon city that loops without a seam. The billboards are for businesses that don't exist (and a few ZRolesLabs projects).
+
+| | |
+|---|---|
+| ![Over the rooftops](docs/eversolo-flight-1.jpg) | ![Down the avenue](docs/eversolo-flight-2.jpg) |
+| ![Past the billboards](docs/eversolo-flight-3.jpg) | ![Vote RAM](docs/eversolo-flight-4.jpg) |
 
 ## Install it (about 5 minutes)
 

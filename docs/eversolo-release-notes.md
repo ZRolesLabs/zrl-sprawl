@@ -1,3 +1,5 @@
+![ZRL Sprawl for Eversolo](https://raw.githubusercontent.com/ZRolesLabs/zrl-sprawl/main/eversolo/docs/eversolo-banner.jpg)
+
 **ZRL Sprawl for Eversolo 1.0.0**: the Sprawl night flight as the screensaver on an Eversolo streamer's own screen. Silent, no permissions (not even internet), nothing to configure.
 
 Tested on the Eversolo DMP-T8 with firmware 1.6.15. Other Eversolo streamers with an Android screen will probably work, but we haven't tried them: [tell us](https://github.com/ZRolesLabs/zrl-sprawl/issues) if you do.

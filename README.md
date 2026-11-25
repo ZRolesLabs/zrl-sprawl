@@ -12,6 +12,8 @@ An un-enshittified screensaver for Windows. A slow night flight over a neon city
 ![One monitor](docs/zrl-sprawl-one-monitor.jpg)
 
 > **Got an Eversolo streamer?** The same flight runs as the screensaver on its screen: see [ZRL Sprawl for Eversolo](eversolo/).
+>
+> [![ZRL Sprawl for Eversolo](eversolo/docs/eversolo-banner.jpg)](eversolo/)
 
 ## Install it (about 2 minutes)
 
